@@ -7,6 +7,9 @@ The toy is created for educational purposes only.\
 The toy is not intended for commercial use.
 
 ---
-### Стэк(requirements.txt)
+![images Planet](img/orig_pac_man.png)
+
+---
+### Стэк (requirements.txt)
 + Python 3.10
 + PyGame 2.4.0
