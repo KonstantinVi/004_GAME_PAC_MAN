@@ -9,6 +9,7 @@ initial_position_y = 663
 
 main_character = []
 
+# Формируем список из изображений для динамичной картинки игрока.
 for i in range(1, 5):
     # изображение 1, 2, 3, 4
     # pygame.transform.scale - изменяет размер картинки (45, 45)
@@ -21,7 +22,7 @@ for i in range(1, 5):
 
 def creating_a_protagonist(screen, direction, counter):
     """Рисование игрока, согласно его расположению в пространстве"""
-    # отрисовывание главного игрока поверх основного (screen) поля игры
+    # Рисование главного игрока поверх основного (screen) поля игры
     if direction == 0:
         # Направление - вправо
         # 5 - отвечает за выбор картинки игрока.
@@ -30,16 +31,97 @@ def creating_a_protagonist(screen, direction, counter):
 
     elif direction == 1:
         # Направление - влево
-        # screen.blit(pygame.transform.flip(main_character[counter // 5], True, False), (initial_position_x, initial_position_y))
         screen.blit(pygame.transform.rotate(main_character[counter // 5], 180),
                     (initial_position_x, initial_position_y))
 
     elif direction == 2:
-        # Направление - ввверх
+        # Направление - вверх
         screen.blit(pygame.transform.rotate(main_character[counter // 5], 90),
                     (initial_position_x, initial_position_y))
 
     elif direction == 3:
         # Направление - вниз
-        screen.blit(pygame.transform.rotate(main_character[counter // 5], 90),
+        screen.blit(pygame.transform.rotate(main_character[counter // 5], -90),
                     (initial_position_x, initial_position_y))
+
+
+def check_position(level, HEIGHT_BOARD, WIDTH_BOARD, direction):
+    """Определяет степень свободы передвижения игрока"""
+    # Центр координат игрока.
+    center_pl_pos_x = initial_position_x + 24
+    """Центр игрока по X"""
+    center_pl_pos_y = initial_position_y + 23
+    """Центр игрока по Y"""
+
+    # Визуализация центра координат игрока.
+    # pygame.draw.circle(screen, 'black', (center_pl_pos_x, center_pl_pos_y), 1)
+
+    # Пути свободы: [вправо, влево, вверх, вниз].
+    free_paths = [False, False, False, False]
+    tmp_1 = (HEIGHT_BOARD - 50) // 32
+    """Количество X-овых клеток"""
+    tmp_2 = WIDTH_BOARD // 30
+    """Количество Y-овых клеток"""
+    tmp_3 = 15
+    """Допуск для 'наезда' на соседнюю клетку"""
+
+    if center_pl_pos_x // 30 < 29:
+        # Игрок смотрит вправо.
+        if direction == 0:
+            if level[center_pl_pos_y // tmp_1][(center_pl_pos_x - tmp_3) // tmp_2] < 3:
+                free_paths[1] = True
+
+        # Игрок смотрит влево.
+        if direction == 1:
+            if level[center_pl_pos_y // tmp_1][(center_pl_pos_x + tmp_3) // tmp_2] < 3:
+                free_paths[0] = True
+
+        # Игрок смотрит вверх.
+        if direction == 2:
+            if level[(center_pl_pos_y + tmp_3) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                free_paths[3] = True
+
+        # Игрок смотрит вниз.
+        if direction == 3:
+            if level[(center_pl_pos_y - tmp_3) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                free_paths[2] = True
+
+        if direction in (2, 3):
+            # Определение 'окна' шага игрока по X.
+            if 12 <= (center_pl_pos_x % tmp_2) <= 18:
+                if level[(center_pl_pos_y + tmp_3) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                    free_paths[3] = True
+                if level[(center_pl_pos_y - tmp_3) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                    free_paths[2] = True
+
+            # Определение 'окна' шага игрока по Y.
+            if 12 <= (center_pl_pos_y % tmp_1) <= 18:
+                if level[center_pl_pos_y // tmp_1][(center_pl_pos_x - tmp_2) // tmp_2] < 3:
+                    free_paths[1] = True
+                if level[center_pl_pos_y // tmp_1][(center_pl_pos_x + tmp_2) // tmp_2] < 3:
+                    free_paths[0] = True
+
+
+        if direction in (0, 1):
+            # Определение 'окна' шага игрока по X.
+            if 12 <= (center_pl_pos_x % tmp_2) <= 18:
+                if level[(center_pl_pos_y + tmp_1) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                    free_paths[3] = True
+                if level[(center_pl_pos_y - tmp_1) // tmp_1][center_pl_pos_x // tmp_2] < 3:
+                    free_paths[2] = True
+
+            # Определение 'окна' шага игрока по Y.
+            if 12 <= (center_pl_pos_y % tmp_1) <= 18:
+                if level[center_pl_pos_y // tmp_1][(center_pl_pos_x - tmp_3) // tmp_2] < 3:
+                    free_paths[1] = True
+                if level[center_pl_pos_y // tmp_1][(center_pl_pos_x + tmp_3) // tmp_2] < 3:
+                    free_paths[0] = True
+    else:
+        free_paths[0] = True
+        free_paths[1] = True
+
+    return free_paths
+
+
+if __name__ == '__main__':
+    pass

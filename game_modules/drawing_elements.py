@@ -6,7 +6,7 @@ import math
 from game_modules import board_level
 
 
-def draw_board(HEIGHT_BOARD, WIDTH_BOARD, screen, level):
+def draw_board(HEIGHT_BOARD, WIDTH_BOARD, screen, level, flicker):
     """Заполнение элементами поля уровня"""
 
     cell_height = (HEIGHT_BOARD - 50) // 32
@@ -29,10 +29,10 @@ def draw_board(HEIGHT_BOARD, WIDTH_BOARD, screen, level):
                                    4,
                                    )
 
-            elif level[i][j] == 2:
+            elif level[i][j] == 2 and flicker:
                 # Рисуем жирную точку.
                 pygame.draw.circle(screen,
-                                   'white',
+                                   'grey',
                                    (j * cell_width + (cell_width * 0.5),
                                     i * cell_height + (cell_height * 0.5)),
                                    10,
