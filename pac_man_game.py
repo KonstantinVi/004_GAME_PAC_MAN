@@ -30,9 +30,18 @@ fps = 60
 direction = 0
 counter = 0
 flicker = True
+direction_command = 0
+speed_player = 2
+"""Скорость движения игрока"""
 font = pygame.font.Font('game_modules/FreeSans.ttf', 15)
 level = board_level.game_board_level
 """Разметка уровня игры"""
+
+# Работа с изображениями главного героя.
+initial_position_x = 425
+"""Начальная позиция игрока по Y"""
+initial_position_y = 663
+"""Начальная позиция игрока по X"""
 
 
 # Основной цикл игры.
@@ -63,13 +72,25 @@ while game_cycle:
     # Загрузка главного героя игры.
     pac_man_main_player.creating_a_protagonist(screen,
                                                direction,
-                                               counter)
+                                               counter,
+                                               initial_position_x,
+                                               initial_position_y)
 
     # Определяет степень свободы движения игрока.
-    pac_man_main_player.check_position(level,
-                                       HEIGHT_BOARD,
-                                       WIDTH_BOARD,
-                                       direction)
+    check_freedom = pac_man_main_player.check_position(level,
+                                                       HEIGHT_BOARD,
+                                                       WIDTH_BOARD,
+                                                       direction,
+                                                       initial_position_x,
+                                                       initial_position_y)
+
+    # координаты движения игрока
+    initial_position_x, \
+        initial_position_y = pac_man_main_player.player_movement(initial_position_x,
+                                                                 initial_position_y,
+                                                                 speed_player,
+                                                                 direction,
+                                                                 check_freedom)
 
     for event in pygame.event.get():
 
@@ -78,19 +99,45 @@ while game_cycle:
             game_cycle = False
 
         # Определение направления игрока, с помощью клавиатуры.
+        # Нажатие клавиши.
         if event.type == pygame.KEYDOWN:
             # Игрок смотрит вправо.
             if event.key == pygame.K_RIGHT:
-                direction = 0
+                direction_command = 0
             # Игрок смотрит влево.
             if event.key == pygame.K_LEFT:
-                direction = 1
+                direction_command = 1
             # Игрок смотрит вверх.
             if event.key == pygame.K_UP:
-                direction = 2
+                direction_command = 2
             # Игрок смотрит вниз.
             if event.key == pygame.K_DOWN:
-                direction = 3
+                direction_command = 3
+
+        # Отпуск клавиши.
+        if event.type == pygame.KEYUP:
+            # Игрок смотрит вправо.
+            if event.key == pygame.K_RIGHT and direction_command == 0:
+                direction_command = direction
+            # Игрок смотрит влево.
+            if event.key == pygame.K_LEFT and direction_command == 1:
+                direction_command = direction
+            # Игрок смотрит вверх.
+            if event.key == pygame.K_UP and direction_command == 2:
+                direction_command = direction
+            # Игрок смотрит вниз.
+            if event.key == pygame.K_DOWN and direction_command == 3:
+                direction_command = direction
+
+    # Куда игрок может идти.
+    for i in range(4):
+        if direction_command == i and check_freedom[i]:
+            direction = i
+
+    if initial_position_x > 900:
+        initial_position_x = -47
+    elif initial_position_x < -50:
+        initial_position_x = 897
 
     pygame.display.flip()
 

@@ -3,10 +3,6 @@
 import pygame
 
 
-# Работа с изображениями главного героя.
-initial_position_x = 425
-initial_position_y = 663
-
 main_character = []
 
 # Формируем список из изображений для динамичной картинки игрока.
@@ -20,7 +16,11 @@ for i in range(1, 5):
             (45, 45)))
 
 
-def creating_a_protagonist(screen, direction, counter):
+def creating_a_protagonist(screen,
+                           direction,
+                           counter,
+                           initial_position_x,
+                           initial_position_y):
     """Рисование игрока, согласно его расположению в пространстве"""
     # Рисование главного игрока поверх основного (screen) поля игры
     if direction == 0:
@@ -45,7 +45,12 @@ def creating_a_protagonist(screen, direction, counter):
                     (initial_position_x, initial_position_y))
 
 
-def check_position(level, HEIGHT_BOARD, WIDTH_BOARD, direction):
+def check_position(level,
+                   HEIGHT_BOARD,
+                   WIDTH_BOARD,
+                   direction,
+                   initial_position_x,
+                   initial_position_y):
     """Определяет степень свободы передвижения игрока"""
     # Центр координат игрока.
     center_pl_pos_x = initial_position_x + 24
@@ -121,6 +126,19 @@ def check_position(level, HEIGHT_BOARD, WIDTH_BOARD, direction):
         free_paths[1] = True
 
     return free_paths
+
+
+def player_movement(point_x, point_y, speed_player, direction, check_freedom):
+    """Движение игрока"""
+    if direction == 0 and check_freedom[0]:
+        point_x += speed_player
+    elif direction == 1 and check_freedom[1]:
+        point_x -= speed_player
+    if direction == 2 and check_freedom[2]:
+        point_y -= speed_player
+    elif direction == 3 and check_freedom[3]:
+        point_y += speed_player
+    return point_x, point_y
 
 
 if __name__ == '__main__':
