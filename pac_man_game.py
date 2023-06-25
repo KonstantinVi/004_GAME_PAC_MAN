@@ -2,48 +2,56 @@
 # Python 3.10
 import pygame
 
-# импорт уровня доски Игры.
-from game_modules.board_level import game_board_level
-from game_modules.drawing_elements import drawing_element
+# Импорт уровня доски игры.
+from game_modules import board_level, drawing_elements
+# Импорт главного героя.
+from game_modules import pac_man_main_player
 
-# Инициализация PyGame
+
+# Инициализация PyGame.
 pygame.init()
 pygame.font.init()
 
 # Начальные данные.
 # Константы размера поля.
 HEIGHT_BOARD = 950
+"""Высота игрового поля"""
 WIDTH_BOARD = 900
+"""Ширина игрового поля"""
 
 screen = pygame.display.set_mode([WIDTH_BOARD, HEIGHT_BOARD])
+"""Поле игры"""
 timer = pygame.time.Clock()
+"""Создание объекта 'Таймер обновления'"""
 fps = 60
+"""Частота кадров в секунду"""
+direction = 0
+counter = 0
 font = pygame.font.Font('game_modules/FreeSans.ttf', 15)
-level = game_board_level
+level = board_level.game_board_level
+"""Разметка уровня игры"""
 
 
-def draw_board():
-    """Заполнение элементами поля уровня"""
-    cell_height = (HEIGHT_BOARD - 50) // 32
-    cell_width = WIDTH_BOARD // 30
-
-    row_count = len(level)
-    """Количество строк в поле уровня"""
-
-    for i in range(row_count):  # идём по строкам
-        cell_counter_in_a_row = len(level[i])
-        for j in range(cell_counter_in_a_row):  # идём по ячейкам
-            drawing_element(i, j, screen, cell_height, cell_width)
-
-
-# "Бесконечный" Цикл Игры.
+# Основной цикл игры.
 game_cycle = True
 
 while game_cycle:
+    # Таймер обновления экрана.
     timer.tick(fps)
     screen.fill('black')
 
-    draw_board()
+    # Счётчик итераций.
+    # Счётчик отвечает за частоту обновления кадра картинки игрока.
+    if counter < 19:
+        counter += 1
+    else:
+        counter = 0
+
+    # Рисование поля игры.
+    drawing_elements.draw_board(HEIGHT_BOARD, WIDTH_BOARD, screen, level)
+
+    # Загрузка главного героя игры.
+    pac_man_main_player.creating_a_protagonist(screen, direction, counter)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -51,4 +59,5 @@ while game_cycle:
 
     pygame.display.flip()
 
+# ДеИнициализация PyGame.
 pygame.quit()

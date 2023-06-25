@@ -13,3 +13,12 @@ The toy is not intended for commercial use.
 ### Стэк (requirements.txt)
 + Python 3.10
 + PyGame 2.4.0
+
+### Файловая структура Проекта
++ folder | game_modules
+  + board_level
+  + drawing_elements
+  + FreeSans.ttf
++ pac_man_game 
+
+pac_man_game - файл запуска Игры.
